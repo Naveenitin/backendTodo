@@ -1,7 +1,7 @@
 const express = require("express");
-var bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Todos = require("./todoModel");
+const cors = require("cors");
 const app = express();
 
 mongoose.connect("mongodb://localhost:27017/todo", {
@@ -16,15 +16,18 @@ app.use(
   })
 );
 
-app.get("/todo", (req, res) => {
+app.use(cors());
+
+app.get("/api/todo", (req, res) => {
   // to return all todo
+  // console.log("I'm requested");
   Todos.find({}, (err, list) => {
     if (err) console.log(err);
-    res.send(list);
+    res.status(200).send(list);
   });
 });
 
-app.post("/todo", (req, res) => {
+app.post("/api/todo", (req, res) => {
   // to add todo
   console.log(req.body);
   Todos.create(req.body).then(() => {
@@ -32,7 +35,7 @@ app.post("/todo", (req, res) => {
   });
 });
 
-app.delete("/todo/:id", (req, res) => {
+app.delete("/api/todo/:id", (req, res) => {
   // to delete todo
   console.log(req.params);
   Todos.deleteOne({ _id: req.params.id }, (err) => {
@@ -43,7 +46,7 @@ app.delete("/todo/:id", (req, res) => {
   });
 });
 
-app.put("/todo/:id", (req, res) => {
+app.put("/api/todo/:id", (req, res) => {
   // to upadate todo
   console.log(`updating entry with ${req.params.id}`);
   Todos.updateOne(
@@ -58,6 +61,6 @@ app.put("/todo/:id", (req, res) => {
   );
 });
 
-app.listen(3000, () => {
-  console.log("Backend server is started on server port 3000");
+app.listen(8000, () => {
+  console.log("Backend server is started on server port 8000");
 });
